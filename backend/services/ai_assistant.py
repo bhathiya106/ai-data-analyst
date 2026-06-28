@@ -5,12 +5,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-client = openai.OpenAI(
-    api_key=os.getenv('GROQ_API_KEY'),
-    base_url='https://api.groq.com/openai/v1'
-)
-
 MODEL = 'llama-3.1-8b-instant'
+
+def get_client():
+    return openai.OpenAI(
+        api_key=os.getenv('GROQ_API_KEY'),
+        base_url='https://api.groq.com/openai/v1'
+    )
 
 def build_context(df: pd.DataFrame) -> str:
     numeric = df.select_dtypes(include='number')
@@ -25,11 +26,12 @@ Dataset overview:
 """
 
 def ask_question(df: pd.DataFrame, question: str) -> str:
+    client = get_client()
     context = build_context(df)
     response = client.chat.completions.create(
         model=MODEL,
         messages=[
-            {'role': 'system', 'content': f'You are an expert data analyst. Answer questions about the dataset clearly. Dataset context: {context}'},
+            {'role': 'system', 'content': f'You are an expert data analyst. Dataset context: {context}'},
             {'role': 'user', 'content': question}
         ],
         max_tokens=600
