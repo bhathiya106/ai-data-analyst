@@ -116,4 +116,4 @@ elif page == 'Report':
     if st.button('Generate AI executive summary'):
         with st.spinner('Generating...'):
             res = requests.get(f'{API_URL}/summary')
-            st.markdown(res.json()['summary'])
+            st.markdown(res.json()['summary']

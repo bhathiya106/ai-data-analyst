@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Data Analyst - Premium Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/static/style.css?v=7">
+</head>
+<body class="dark-theme">
+    <!-- Login Modal Overlay -->
+    <div class="login-overlay" id="login-overlay">
+        <div class="glass-card login-card animate-scale-up">
+            <div class="login-logo">
+                <div class="logo-icon" style="font-size: 2.2rem;"><i class="fa-solid fa-brain-circuit"></i></div>
+                <span class="logo-text" style="font-size: 2rem;">Analyst<span>.AI</span></span>
+            </div>
+            
+            <div class="login-tabs">
+                <button class="login-tab-btn active" id="tab-btn-login">Sign In</button>
+                <button class="login-tab-btn" id="tab-btn-register">Register</button>
+            </div>
+            
+            <!-- Sign In Form -->
+            <form id="login-form" class="auth-form active">
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <div class="input-with-icon">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="login-username" placeholder="Enter username" required autocomplete="username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <div class="input-with-icon">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="login-password" placeholder="Enter password" required autocomplete="current-password">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="justify-content: center; width: 100%; margin-top: 1rem;">
+                    Sign In <i class="fa-solid fa-right-to-bracket"></i>
+                </button>
+                <div class="auth-divider" style="text-align: center; margin: 1rem 0; color: var(--text-muted); font-size: 0.85rem; position: relative;">
+                    <span style="background: #0d1527; padding: 0 10px; z-index: 1; position: relative;">or</span>
+                    <hr style="position: absolute; top: 50%; left: 0; right: 0; border: none; border-top: 1px solid var(--border-color); margin: 0; z-index: 0;">
+                </div>
+                <button type="button" class="btn btn-google" id="btn-google-login" style="justify-content: center; width: 100%; display: flex; align-items: center; gap: 0.75rem; background: #ffffff; color: #1f2937; border: 1px solid #e5e7eb; font-weight: 600; border-radius: 8px; padding: 0.75rem; transition: all 0.2s; cursor: pointer;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    Sign In with Google
+                </button>
+                <p class="auth-status" id="login-status"></p>
+            </form>
+            
+            <!-- Register Form -->
+            <form id="register-form" class="auth-form">
+                <div class="form-group">
+                    <label for="register-username">Username</label>
+                    <div class="input-with-icon">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <input type="text" id="register-username" placeholder="Choose a username" required autocomplete="username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <div class="input-with-icon">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="register-password" placeholder="Create password" required autocomplete="new-password">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="justify-content: center; width: 100%; margin-top: 1rem;">
+                    Create Account <i class="fa-solid fa-user-plus"></i>
+                </button>
+                <p class="auth-status" id="register-status"></p>
+            </form>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <div class="logo-icon"><i class="fa-solid fa-brain-circuit"></i></div>
+                <span class="logo-text">Analyst<span>.AI</span></span>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-tab="upload">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <span>Upload & Clean</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="dashboard">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="chat">
+                    <i class="fa-solid fa-comments"></i>
+                    <span>AI Assistant</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="report">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                    <span>Executive Report</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="admin" id="nav-item-admin" style="display: none;">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>Admin Control</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <span class="status-indicator online"></span>
+                <span class="status-text">Connected to API</span>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top bar -->
+            <header class="top-bar">
+                <div class="page-title-area">
+                    <h1 id="page-title">Upload & Clean</h1>
+                    <p id="page-subtitle">Upload your dataset to start the AI cleaning and analytics pipeline</p>
+                </div>
+                <div class="user-profile">
+                    <span id="user-display-name" style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); margin-right: 0.5rem;">Guest</span>
+                    <div class="notification-btn"><i class="fa-regular fa-bell"></i></div>
+                    <div class="avatar"><i class="fa-solid fa-user-tie"></i></div>
+                    <div class="notification-btn" id="btn-logout" title="Logout" style="cursor: pointer; background: rgba(244, 63, 94, 0.05); border-color: rgba(244, 63, 94, 0.15); color: var(--accent-rose);"><i class="fa-solid fa-right-from-bracket"></i></div>
+                </div>
+            </header>
+            
+            <!-- Dynamic Content Sections -->
+            <div class="content-wrapper">
+                
+                <!-- Upload & Clean Section -->
+                <section id="tab-upload" class="tab-content active">
+                    <div class="glass-card upload-container">
+                        <div class="drop-zone" id="drop-zone">
+                            <input type="file" id="file-input" accept=".csv, .xlsx, .xls" style="display: none;">
+                            <div class="drop-zone-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                            <h3>Drag & Drop your file here</h3>
+                            <p>Supports CSV, XLSX or XLS formats (Max 50MB)</p>
+                            <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">Browse Files</button>
+                        </div>
+                        <div class="progress-bar-container" id="upload-progress-container" style="display: none;">
+                            <div class="progress-info">
+                                <span id="progress-status">Uploading & Analyzing...</span>
+                                <span id="progress-percent">0%</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill" id="upload-progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upload Stats Grid (initially hidden) -->
+                    <div class="stats-grid" id="upload-stats-grid" style="display: none;">
+                        <div class="glass-card stat-card">
+                            <div class="stat-icon icon-rows"><i class="fa-solid fa-list-ol"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-label">Total Rows</span>
+                                <h2 class="stat-value" id="val-rows">0</h2>
+                            </div>
+                        </div>
+                        <div class="glass-card stat-card">
+                            <div class="stat-icon icon-cols"><i class="fa-solid fa-table-columns"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-label">Total Columns</span>
+                                <h2 class="stat-value" id="val-cols">0</h2>
+                            </div>
+                        </div>
+                        <div class="glass-card stat-card">
+                            <div class="stat-icon icon-dupes"><i class="fa-solid fa-clone"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-label">Duplicates Removed</span>
+                                <h2 class="stat-value" id="val-dupes">0</h2>
+                            </div>
+                        </div>
+                        <div class="glass-card stat-card">
+                            <div class="stat-icon icon-missing"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-label">Missing Values Fixed</span>
+                                <h2 class="stat-value" id="val-missing">0</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Data Info Grid (initially hidden) -->
+                    <div class="data-details-grid" id="data-details-grid" style="display: none;">
+                        <!-- Missing Values Fixed -->
+                        <div class="glass-card detail-card">
+                            <div class="card-header">
+                                <h3>Missing Values Resolved</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="missing-values-list" class="badge-list">
+                                    <!-- Populated by JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Data Types -->
+                        <div class="glass-card detail-card">
+                            <div class="card-header">
+                                <h3>Detected Columns & Schema</h3>
+                            </div>
+                            <div class="card-body scrollable-y max-h-300">
+                                <table class="custom-table" id="dtypes-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Column Name</th>
+                                            <th>Type</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Populated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Dashboard Section -->
+                <section id="tab-dashboard" class="tab-content">
+                    <div class="dashboard-actions">
+                        <button class="btn btn-secondary btn-refresh" id="refresh-dashboard">
+                            <i class="fa-solid fa-rotate"></i> Refresh Data
+                        </button>
+                    </div>
+
+                    <!-- Business Insights Summary (For Managers) -->
+                    <div class="glass-card business-summary-card" style="margin-bottom: 2rem;">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-briefcase" style="color: var(--accent-cyan);"></i> Executive Business Insights</h3>
+                        </div>
+                        <div class="card-body">
+                            <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.95rem;">
+                                This section translates complex statistical metrics into actionable business context for decision makers and managers.
+                            </p>
+                            <div class="insights-grid" id="insights-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+                                <div class="insight-box" style="background: rgba(255,255,255,0.02); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border-color);">
+                                    <h4 style="color: var(--accent-cyan); font-size: 0.95rem; margin-bottom: 0.50rem;"><i class="fa-solid fa-chart-bar"></i> Key Category Trends</h4>
+                                    <p id="insight-dist" style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4;">Select category parameters below to dynamically calculate distributions.</p>
+                                </div>
+                                <div class="insight-box" style="background: rgba(255,255,255,0.02); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border-color);">
+                                    <h4 style="color: var(--accent-purple); font-size: 0.95rem; margin-bottom: 0.50rem;"><i class="fa-solid fa-circle-nodes"></i> Correlation Explainer</h4>
+                                    <p id="insight-corr" style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4;">Strong relationships (values near 1 or -1) indicate variables changing together, pointing to potential business drivers.</p>
+                                </div>
+                                <div class="insight-box" style="background: rgba(255,255,255,0.02); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border-color);">
+                                    <h4 style="color: var(--accent-emerald); font-size: 0.95rem; margin-bottom: 0.50rem;"><i class="fa-solid fa-arrow-trend-up"></i> Forecast Reliability</h4>
+                                    <p id="insight-forecast" style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4;">Confidence score represents how reliably our predictive models fit the past data pattern. Closer to 1.0 indicates higher predictability.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <!-- Described Stats Card -->
+                        <div class="glass-card eda-stats-card">
+                            <div class="card-header">
+                                <h3>Dataset Descriptive Summary</h3>
+                            </div>
+                            <div class="card-body table-responsive">
+                                <table class="custom-table" id="eda-summary-table">
+                                    <thead>
+                                        <!-- Populated dynamically -->
+                                    </thead>
+                                    <tbody>
+                                        <!-- Populated dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Category Breakdown Visualizer -->
+                        <div class="glass-card chart-card">
+                            <div class="card-header">
+                                <h3>Categorical Distribution</h3>
+                                <div class="chart-controls">
+                                    <select id="select-cat-col" class="form-select"></select>
+                                    <select id="select-num-col" class="form-select"></select>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-canvas-container">
+                                    <canvas id="category-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Correlation Heatmap -->
+                        <div class="glass-card chart-card">
+                            <div class="card-header">
+                                <h3>Correlation Matrix</h3>
+                            </div>
+                            <div class="card-body flex-center">
+                                <div class="heatmap-container" id="heatmap-container">
+                                    <!-- Rendered dynamically -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Forecasting Metrics Card -->
+                        <div class="glass-card forecast-card">
+                            <div class="card-header">
+                                <h3>Time Series Predictive Analytics</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="forecast-metrics-grid">
+                                    <div class="metric-box">
+                                        <span class="metric-lbl">Trend</span>
+                                        <div class="metric-val" id="forecast-trend">
+                                            <span class="trend-indicator"><i class="fa-solid fa-arrow-trend-up"></i></span>
+                                            <span class="trend-text">Upward</span>
+                                        </div>
+                                    </div>
+                                    <div class="metric-box">
+                                        <span class="metric-lbl">R² Score (Confidence)</span>
+                                        <div class="metric-val" id="forecast-r2">0.0</div>
+                                    </div>
+                                    <div class="metric-box">
+                                        <span class="metric-lbl">Mean Abs Error (MAE)</span>
+                                        <div class="metric-val" id="forecast-mae">0.0</div>
+                                    </div>
+                                </div>
+
+                                <div class="forecast-chart-container">
+                                    <canvas id="forecast-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Plotly Interactive Charts Gallery -->
+                        <div class="glass-card plotly-gallery-card" style="grid-column: span 2;">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-chart-pie" style="color: var(--accent-cyan);"></i> Interactive Plotly Analytics</h3>
+                            </div>
+                            <div class="card-body">
+                                <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem;">
+                                    View full multi-dimensional Plotly charts generated by our backend services. Zoom, hover, filter, and pan.
+                                </p>
+                                <div class="plotly-tabs" id="plotly-tabs" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                                    <!-- Dynamic Plotly Tab Buttons -->
+                                </div>
+                                <div class="plotly-iframe-container" id="plotly-iframe-container" style="position: relative; width: 100%; height: 500px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden;">
+                                    <div class="iframe-placeholder" id="iframe-placeholder" style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-secondary); flex-direction: column; gap: 1rem;">
+                                        <i class="fa-solid fa-chart-line" style="font-size: 2.5rem; color: var(--accent-cyan);"></i>
+                                        <span>Click an interactive chart tab above to load the Plotly view</span>
+                                    </div>
+                                    <iframe id="plotly-iframe" src="" style="width: 100%; height: 100%; border: none; display: none;"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- AI Chat Section -->
+                <section id="tab-chat" class="tab-content">
+                    <div class="chat-container">
+                        <!-- Chat suggestions -->
+                        <div class="chat-suggestions">
+                            <span class="suggestions-title"><i class="fa-solid fa-lightbulb"></i> Suggested Questions:</span>
+                            <div class="suggestions-list" id="suggestions-list">
+                                <button class="btn btn-tag">Which region has the highest sales?</button>
+                                <button class="btn btn-tag">What are the top 5 products by revenue?</button>
+                                <button class="btn btn-tag">Are there anomalies in the data?</button>
+                                <button class="btn btn-tag">What recommendations do you have?</button>
+                            </div>
+                        </div>
+
+                        <!-- Chat Messages Screen -->
+                        <div class="chat-screen" id="chat-screen">
+                            <div class="chat-bubble bot-message">
+                                <div class="bubble-avatar"><i class="fa-solid fa-brain-circuit"></i></div>
+                                <div class="bubble-content">
+                                    <p>Hello! I am your AI Data Analyst assistant. I have reviewed your dataset. Ask me anything about your data - for example, sales performance, trend forecasting, anomalies or product distributions!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chat Input Panel -->
+                        <div class="chat-input-panel">
+                            <input type="text" id="chat-input" placeholder="Type your data query here..." autocomplete="off">
+                            <button class="btn btn-primary btn-send" id="chat-send-btn">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Executive Report Section -->
+                <section id="tab-report" class="tab-content">
+                    <div class="report-container">
+                        <div class="glass-card report-card">
+                            <div class="report-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="report-logo">
+                                    <i class="fa-solid fa-brain-circuit"></i>
+                                    <span>Analyst.AI Executive Report</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem;">
+                                    <button class="btn" id="btn-download-pdf" style="display: none; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-primary); gap: 0.5rem; align-items: center; justify-content: center; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 500; cursor: pointer; transition: background 0.2s;">
+                                        <i class="fa-solid fa-file-pdf" style="color: #ff4a4a; font-size: 1.1rem;"></i> Download PDF
+                                    </button>
+                                    <button class="btn btn-primary" id="btn-generate-report">
+                                        <i class="fa-solid fa-wand-magic-sparkles"></i> Generate AI Summary
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="report-body" id="report-body">
+                                <div class="report-placeholder">
+                                    <i class="fa-solid fa-file-signature"></i>
+                                    <h3>No Report Generated Yet</h3>
+                                    <p>Click "Generate AI Summary" above to build a comprehensive data intelligence report using the Generative AI engine.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Admin Section -->
+                <section id="tab-admin" class="tab-content">
+                    <div class="admin-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <!-- Registered Users List -->
+                        <div class="glass-card admin-card">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-users" style="color: var(--accent-cyan);"></i> Registered System Users</h3>
+                            </div>
+                            <div class="card-body scrollable-y" style="max-height: 350px;">
+                                <table class="custom-table" id="admin-users-table">
+                                    <thead>
+                                        <tr>
+                                            <th>User ID</th>
+                                            <th>Username</th>
+                                            <th>Role</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Populated dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- System Cleanup / Disk Stats -->
+                        <div class="glass-card admin-card">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-circle-nodes" style="color: var(--accent-purple);"></i> System Administration</h3>
+                            </div>
+                            <div class="card-body" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                                <div class="admin-actions-box" style="padding: 1.25rem; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid var(--border-color);">
+                                    <h4 style="color: var(--accent-rose); font-size: 0.95rem; margin-bottom: 0.5rem;"><i class="fa-solid fa-dumpster-fire"></i> Disk Cleanup Utility</h4>
+                                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.4;">
+                                        Delete all temporary user CSV/Excel uploads and generated static HTML chart files from the server's disk space.
+                                    </p>
+                                    <button class="btn btn-primary" id="btn-admin-cleanup" style="background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%); box-shadow: 0 4px 15px rgba(244, 63, 94, 0.3);">
+                                        <i class="fa-solid fa-trash-can"></i> Purge Temporary Files
+                                    </button>
+                                </div>
+                                <p id="admin-cleanup-status" style="font-size: 0.85rem; font-weight: 500; text-align: center; margin-top: -0.5rem;"></p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+            </div>
+        </main>
+    </div>
+    <!-- App Script -->
+    <script src="/static/app.js?v=9"></script>
+</body>
+</html>
