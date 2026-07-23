@@ -10,6 +10,11 @@ router = APIRouter()
 
 @router.get('/analyze')
 def analyze(file_path: str = 'uploads/cleaned_data.csv'):
+    # Ensure absolute pathing resolution
+    if not os.path.isabs(file_path):
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        file_path = os.path.join(base_dir, file_path)
+
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="No active dataset found.")
         
@@ -35,6 +40,11 @@ def analyze(file_path: str = 'uploads/cleaned_data.csv'):
 
 @router.get('/groupby')
 def groupby(cat_col: str, num_col: str, file_path: str = 'uploads/cleaned_data.csv'):
+    # Ensure absolute pathing resolution
+    if not os.path.isabs(file_path):
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        file_path = os.path.join(base_dir, file_path)
+
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="No active dataset found.")
     try:

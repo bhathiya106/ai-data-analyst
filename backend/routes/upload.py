@@ -8,12 +8,13 @@ router = APIRouter()
 
 @router.post('/upload')
 async def upload_file(file: UploadFile = File(...)):
-
-    # Create uploads folder if it doesn't exist
-    os.makedirs("uploads", exist_ok=True)
+    # Resolve absolute path for uploads directory
+    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    upload_dir = os.path.join(base_dir, 'uploads')
+    os.makedirs(upload_dir, exist_ok=True)
 
     # Save uploaded file
-    file_path = f'uploads/{file.filename}'
+    file_path = os.path.join(upload_dir, file.filename)
 
     with open(file_path, 'wb') as buffer:
         shutil.copyfileobj(file.file, buffer)
@@ -22,7 +23,7 @@ async def upload_file(file: UploadFile = File(...)):
     df, report = clean_data(load_file(file_path))
 
     # Save cleaned version
-    df.to_csv('uploads/cleaned_data.csv', index=False)
+    df.to_csv(os.path.join(upload_dir, 'cleaned_data.csv'), index=False)
 
     return JSONResponse({
         'message': 'File uploaded and cleaned successfully',
