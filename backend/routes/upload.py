@@ -8,29 +8,35 @@ router = APIRouter()
 
 @router.post('/upload')
 async def upload_file(file: UploadFile = File(...)):
-    # Resolve absolute path for uploads directory
+
+    # Create absolute uploads path
     base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    upload_dir = os.path.join(base_dir, 'uploads')
+    upload_dir = os.path.join(base_dir, "uploads")
+
+    # Create folder
     os.makedirs(upload_dir, exist_ok=True)
 
     # Save uploaded file
     file_path = os.path.join(upload_dir, file.filename)
 
-    with open(file_path, 'wb') as buffer:
+    print("UPLOAD PATH:", file_path)
+
+    with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    # Clean the data
+    # Clean data
     df, report = clean_data(load_file(file_path))
 
-    # Save cleaned version
-    df.to_csv(os.path.join(upload_dir, 'cleaned_data.csv'), index=False)
+    # Save cleaned file
+    cleaned_path = os.path.join(upload_dir, "cleaned_data.csv")
+    df.to_csv(cleaned_path, index=False)
 
     return JSONResponse({
-        'message': 'File uploaded and cleaned successfully',
-        'filename': file.filename,
-        'rows': report['shape'][0],
-        'columns': report['shape'][1],
-        'missing_fixed': report['missing_before'],
-        'duplicates_removed': report['duplicates_removed'],
-        'dtypes': report['dtypes']
+        "message": "File uploaded and cleaned successfully",
+        "filename": file.filename,
+        "rows": report["shape"][0],
+        "columns": report["shape"][1],
+        "missing_fixed": report["missing_before"],
+        "duplicates_removed": report["duplicates_removed"],
+        "dtypes": report["dtypes"]
     })
