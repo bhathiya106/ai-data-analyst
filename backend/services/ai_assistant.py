@@ -2,6 +2,7 @@ import openai
 import pandas as pd
 import os
 from dotenv import load_dotenv
+import httpx
 
 load_dotenv()
 
@@ -12,9 +13,15 @@ def get_client():
     if not api_key or "your_groq_api_key_here" in api_key:
         return None
     try:
+        # Force IPv4 using custom httpx client to bypass IPv6 outbound routing failures on Railway
+        http_client = httpx.Client(
+            transport=httpx.HTTPTransport(local_address="0.0.0.0"),
+            timeout=30.0
+        )
         return openai.OpenAI(
             api_key=api_key,
-            base_url='https://api.groq.com/openai/v1'
+            base_url='https://api.groq.com/openai/v1',
+            http_client=http_client
         )
     except Exception as e:
         print("Error initializing Groq client:", e)
