@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 
 # Load workspace environment variables from .env file FIRST
-load_dotenv()
+load_dotenv(override=True)
 
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
@@ -13,6 +13,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # Initialize database
 init_db()
+
+os.makedirs("uploads", exist_ok=True)
+os.makedirs("outputs", exist_ok=True)
 
 app = FastAPI(title='AI Data Analyst', version='1.0')
 
