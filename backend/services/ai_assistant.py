@@ -13,10 +13,11 @@ def get_client():
     if not api_key or "your_groq_api_key_here" in api_key:
         return None
     try:
-        # Force IPv4 using custom httpx client to bypass IPv6 outbound routing failures on Railway
+        # Disable SSL verification and force IPv4 to bypass SSL cert issues and IPv6 failures on Railway
         http_client = httpx.Client(
             transport=httpx.HTTPTransport(local_address="0.0.0.0"),
-            timeout=30.0
+            timeout=30.0,
+            verify=False
         )
         return openai.OpenAI(
             api_key=api_key,
