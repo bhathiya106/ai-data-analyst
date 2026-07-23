@@ -10,6 +10,8 @@ MODEL = 'llama-3.1-8b-instant'
 
 def get_client():
     api_key = os.getenv('GROQ_API_KEY')
+    if api_key:
+        api_key = api_key.strip()
     if not api_key or "your_groq_api_key_here" in api_key:
         return None
     try:
