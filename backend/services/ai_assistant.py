@@ -74,6 +74,8 @@ Dataset Context:
         )
         return response.choices[0].message.content
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         print("Error calling Groq API:", e)
         return f"⚠️ **Failed to contact AI Model**: {e}"
 
@@ -146,6 +148,8 @@ Are there any monthly trends in customer acquisition?"""
             cleaned_questions = (cleaned_questions + fallbacks)[:4]
         return cleaned_questions[:4]
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         print("Error generating AI suggestions:", e)
         # Default fallback questions
         return [
