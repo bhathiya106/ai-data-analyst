@@ -1,86 +1,147 @@
-# Deployment Guide & LinkedIn Post Template
+# Deployment & LinkedIn Showcase Guide
 
-This guide provides step-by-step instructions on how to deploy your **AI Data Analyst** web application to cloud hosting platforms (Render / Railway) for free, along with a professionally written LinkedIn post to showcase your project to recruiters.
-
----
-
-## 🚀 Part 1: How to Deploy the Project to Cloud (Render.com - Recommended)
-
-[Render.com](https://render.com) is the best free platform for deploying Python FastAPI applications.
-
-### Step 1: Prepare Your Codebase for Deployment
-1. Ensure your root project directory contains a `requirements.txt` file listing all dependencies:
-   ```text
-   fastapi
-   uvicorn
-   pandas
-   numpy
-   scikit-learn
-   plotly
-   python-dotenv
-   openai
-   ```
-2. Verify that `Procfile` exists in your project root with the following content:
-   ```text
-   web: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
-   ```
-
-### Step 2: Push Your Project to GitHub
-1. Open your terminal in the project directory:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit: AI Data Analyst Full-Stack Application"
-   ```
-2. Create a new repository on GitHub (e.g. `ai-data-analyst`).
-3. Push your code to GitHub:
-   ```bash
-   git remote add origin https://github.com/YOUR_USERNAME/ai-data-analyst.git
-   git branch -M main
-   git push -u origin main
-   ```
-
-### Step 3: Deploy on Render
-1. Sign up/Log in at [render.com](https://render.com).
-2. Click **New +** -> **Web Service**.
-3. Connect your GitHub account and select your `ai-data-analyst` repository.
-4. Fill in the deployment details:
-   - **Name**: `ai-data-analyst`
-   - **Environment**: `Python 3`
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
-5. Under **Environment Variables**, add:
-   - Key: `GROQ_API_KEY` | Value: `your_actual_groq_api_key`
-6. Click **Create Web Service**. Render will automatically build your app and give you a live URL (e.g. `https://ai-data-analyst.onrender.com`).
+This guide details how to deploy the **AI Data Analyst** system to cloud platforms (specifically Railway), configure variables, and prepare for your LinkedIn showcase.
 
 ---
 
-## 💼 Part 2: LinkedIn Project Showcase Post Template
+## 🚀 Part 1: How to Deploy the Project to Railway (Live Server)
+
+Follow these step-by-step instructions to deploy your application to the Railway Cloud Platform.
+
+### Step 1: Initialize Git and Ignore Secrets Locally
+Because the `.env` file contains private API keys and OAuth secrets, it must never be uploaded to GitHub.
+1. Make sure your `.gitignore` contains the following lines (already configured in the project):
+   ```text
+   .env
+   __pycache__/
+   venv/
+   *.db
+   uploads/*
+   !uploads/.gitkeep
+   outputs/*
+   !outputs/.gitkeep
+   ```
+2. If `.env` was previously committed to Git, remove it from tracking:
+   ```bash
+   git rm --cached .env
+   git commit -m "Security: Remove .env from git tracking"
+   git push origin main
+   ```
+
+### Step 2: Push Your Codebase to GitHub
+Ensure all files are staged, committed, and pushed:
+```bash
+git add .
+git commit -m "Deployment preparation: absolute paths and IPv4 overrides"
+git push origin main
+```
+
+### Step 3: Set Up and Configure on Railway
+1. Sign up/Log in at [railway.app](https://railway.app/).
+2. Create a new project and select **"Deploy from GitHub repo"**.
+3. Choose your `ai-data-analyst` repository.
+4. Go to the **Variables** tab of the service on the Railway Dashboard and configure the following environment variables:
+   - `GROQ_API_KEY`: Your Groq API key (e.g. `gsk_...`). Ensure there are no trailing newlines or spaces at the end of the key!
+   - `GOOGLE_CLIENT_ID`: Your Google OAuth Client ID.
+   - `GOOGLE_CLIENT_SECRET`: Your Google OAuth Client Secret.
+   - `GOOGLE_REDIRECT_URI`: Set to `https://your-railway-app-domain.up.railway.app/api/auth/google/callback`
+5. Go to the **Settings** tab:
+   - Under **Source**, click **Enable** next to **"Auto deploy is disabled"** to trigger automatic redeployment every time you run a `git push`.
+   - If Railway has not updated to the latest commit, click **"Check for updates"** and click **"Update"** to pull the latest changes.
+   - In the **Networking** section, ensure your target port is set to **`8080`** (which matches Uvicorn's configuration).
+
+---
+
+## 🔐 Part 2: Multi-Agent AI System Architecture (For IT 3041 Report & Viva)
+
+Your project is structured as a **collaborative multi-agent system** meeting all requirements of the IT 3041 brief:
+
+```
+[ Frontend: User Interface (app.js) ]
+               │
+               │ HTTP API Handshakes (REST / JSON)
+               ▼
+┌────────────────────────────────────────────────────────┐
+│               FastAPI Async Backend                    │
+│                                                        │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ Agent A: Data Prep & Feature Engineering Agent   │  │
+│  │ - Cleans datasets (duplicates, median/mode nulls)│  │
+│  │ - Outputs: cleaned_data.csv                      │  │
+│  └────────────────────────┬─────────────────────────┘  │
+│                           │                            │
+│                           │ Data Flow Integration      │
+│                           ▼                            │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ Agent B: Business Intelligence & Forecasting Agent│  │
+│  │ - Performs regression forecasting (Scikit-Learn) │  │
+│  │ - Exports dynamic Plotly HTML charts to disk      │  │
+│  └────────────────────────┬─────────────────────────┘  │
+│                           │                            │
+│                           │ Context Injection          │
+│                           ▼                            │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ Agent C: Executive AI Analyst & Reporting Agent  │  │
+│  │ - Queries dataset statistics & metadata (DoH/RAG)│  │
+│  │ - Generates reports (Groq / Llama 3.1 8B API)    │  │
+│  └──────────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────┘
+```
+
+1. **Agent A (Data Prep)**: Cleans data structures using Pandas and NumPy.
+2. **Agent B (Visualizer & Forecaster)**: Automatically builds Plotly interactive dashboards and trains linear regression models.
+3. **Agent C (Executive AI Assistant)**: Uses Llama 3.1 via Groq API to answer queries in real-time. It communicates with the data layer via a custom RAG (Retrieval-Augmented Generation) schema context.
+
+---
+
+## 💼 Part 3: LinkedIn Project Showcase Post Template
 
 Copy and paste this post to your LinkedIn profile to highlight your technical capabilities to hiring managers and recruiters!
 
 ```text
-🚀 Excited to launch my latest project: AI Data Analyst - An End-to-End Autonomous Intelligence & Business Analytics Platform! 📊✨
+Project Update: Building an AI-Powered Data Analyst Platform
 
-As businesses deal with large datasets, non-technical decision-makers often struggle to extract quick, actionable insights without needing complex coding skills. To solve this, I built an end-to-end data intelligence web platform that turns raw CSV/Excel files into executive reports and interactive visualizations in seconds!
+I am pleased to share my latest project, a fully functional, cloud-deployed AI Data Analyst Platform designed to turn raw datasets into interactive visualizations and predictive insights in seconds.
 
-🔥 Key Features & Innovations:
-• 🧹 Automated Data Cleaning Pipeline: Detects duplicates, handles null value imputations (median/mode), and transforms raw data into structured schemas.
-• 📊 Multi-Dimensional Interactive Analytics: Automatically generates dynamic Plotly visualizations (Market Share Pie Charts, Scatter Correlations, Heatmaps, and Time-Series Line Graphs).
-• 📈 Time-Series Forecasting: Integrates Scikit-Learn regression models to forecast future metrics with R² confidence scoring.
-• 🤖 Context-Aware AI Business Consultant: Powered by Generative AI, users can ask natural language queries and receive plain-English executive summaries and custom-styled HTML tables—zero programming jargon!
-• 🔐 Full Authentication & Security: Includes password hashing (PBKDF2 SHA256), session tokens, and an Admin Control Panel for user management and storage maintenance.
+Manual data cleaning, complex charting, and report writing can take hours of manual effort. I built this seamless, end-to-end tool to allow users to upload a dataset, automatically clean it, generate interactive plots, and ask a conversational AI assistant questions about their business metrics.
 
-🛠️ Tech Stack:
-- Backend: Python, FastAPI, Uvicorn, SQLite, Pandas, NumPy, Scikit-Learn
-- AI & LLM: Generative AI SDK, Open-Source LLMs (Groq API / Llama 3)
-- Visualizations: Plotly, Chart.js
-- Frontend: Vanilla HTML5, CSS3 (Glassmorphic Theme), JavaScript (ES6)
+Here is a breakdown of what the application does and the technical stack behind it.
 
-💻 Live Demo: [Insert Your Render Live URL Here]
-📂 GitHub Repository: [Insert Your GitHub Repo Link Here]
+Key Features:
+- Google OAuth 2.0 Authentication: Secure login flow with account selection.
+- Smart Data Cleaning: Automatic detection and handling of missing values, duplicates, and column data types on upload.
+- Interactive Visualizations: Dynamic charts (Bar, Scatter, Line, Heatmaps) powered by Plotly.
+- Machine Learning Forecasting: Automated trend forecasting of numeric variables.
+- AI Assistant Chat: A natural language assistant that lets you query the dataset and get immediate business insights.
+- Executive Summary Generator: Instantly generates detailed executive summaries, data quality reports, and recommendations.
+- Export to PDF: Download the professional executive report directly as a beautifully styled PDF document.
 
-I’d love to hear your feedback! Feel free to check out the repo or connect if you're interested in data engineering, AI application development, or full-stack analytics solutions. 
+The Technology Stack:
+Frontend:
+- HTML5 and CSS3 (Modern UI, responsive layouts, dark/light palettes)
+- Vanilla JavaScript (ES6, asynchronous API integrations)
+- Plotly.js (Interactive plotting library)
 
-#DataScience #Python #FastAPI #MachineLearning #ArtificialIntelligence #WebDevelopment #DataAnalytics #GenerativeAI #FullStack #OpenSource
+Backend:
+- FastAPI (Python) - High performance, asynchronous web framework.
+- Uvicorn - ASGI server implementation.
+- SQLite3 - Session and user authentication database.
+
+Artificial Intelligence and Machine Learning:
+- Groq Cloud API (Llama 3.1 8B Instant model) for real-time natural language answers and summary reports.
+- Pandas and NumPy - High-performance data manipulation and cleaning.
+- Scikit-Learn - Used for forecasting and predictive analytics.
+
+Deployment and DevOps:
+- Version Control: Git and GitHub.
+- Cloud Hosting: Deployed live on the Railway Cloud Platform using containerized Docker environments.
+
+Live Application Link: https://ai-data-analyst-production-ecda.up.railway.app/
+(Note: For the best user experience and viewing interactive charts, please use a desktop browser.)
+
+Developing this application provided deep insights into handling production challenges such as CORS, secure Google OAuth redirects, container environment key configuration, and network routing.
+
+I look forward to hearing your thoughts and suggestions in the comments.
+
+#DataScience #MachineLearning #ArtificialIntelligence #FastAPI #Python #WebDevelopment #DataAnalyst #Plotly #GenerativeAI #CloudComputing #Railway #OpenSource
 ```
